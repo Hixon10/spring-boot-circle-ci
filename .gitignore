@@ -26,6 +26,8 @@ nbdist/
 
 /generated
 
+/out
+
 # Compiled class file
 *.class
 
