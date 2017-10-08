@@ -44,14 +44,24 @@ dependencies {
     jooqRuntime 'org.postgresql:postgresql:9.4.1212'
 }
 
+ext {
+    databaseUrl = 'jdbc:postgresql://localhost:5432/blog'
+    databaseLogin = 'spring-boot-user'
+    databasePassword = 'spring-boot-user'
+}
+
+processResources {
+    expand(project.properties)
+}
+
 
 jooq {
     csmart(sourceSets.main) {
         jdbc {
             driver = 'org.postgresql.Driver'
-            url = 'jdbc:postgresql://localhost:5432/blog'
-            user = 'spring-boot-user'
-            password = 'spring-boot-user'
+            url = databaseUrl
+            user = databaseLogin
+            password = databasePassword
             schema = 'public'
         }
         generator {
@@ -79,13 +89,13 @@ jooq {
 }
 
 flyway {
-    url = 'jdbc:postgresql://localhost:5432/blog'
-    user = 'spring-boot-user'
-    password = 'spring-boot-user'
+    url = databaseUrl
+    user = databaseLogin
+    password = databasePassword
     schemas = ['public']
     locations = ["filesystem:$project.projectDir/src/main/resources/db/migration"]
 }
 
-build.dependsOn(test)
-
 generateCsmartJooqSchemaSource.dependsOn flywayMigrate
+
+bootRun.dependsOn flywayMigrate

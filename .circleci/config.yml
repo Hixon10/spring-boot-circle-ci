@@ -9,6 +9,12 @@ jobs:
       # specify the version you desire here
       - image: circleci/openjdk:8-jdk
 
+      - image: circleci/postgres:9.6.2-alpine
+        environment:
+          POSTGRES_USER: spring-boot-user
+          POSTGRES_DB: blog
+          POSTGRES_PASSWORD: spring-boot-user
+
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
@@ -37,6 +43,10 @@ jobs:
           paths:
             - ~/.m2
           key: v1-dependencies-{{ checksum "build.gradle" }}
+
+      - run:
+          name: Wait for DB
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
 
       # run tests!
       - run: gradle test
